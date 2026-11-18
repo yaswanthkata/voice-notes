@@ -6,8 +6,8 @@ description: Add a new delivery connector (CRM, note-taking tool, spreadsheet, c
 # Add a connector
 
 Connectors live in `internal/sinks/<name>/` and plug into the registry in
-`internal/sinks/sink.go`. The core must not change. Follow `internal/sinks/hubspot/`
-as the reference implementation.
+`internal/sinks/sink.go`. The core must not change. Use `internal/sinks/console/`
+for the registration pattern; the steps below cover mapping and transport.
 
 ## Steps
 
