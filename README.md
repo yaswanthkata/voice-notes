@@ -23,8 +23,8 @@ audio ──▶ POST /v1/notes ──▶ Gemini (transcribe + extract, JSON sche
 
 ## Live demo
 
-**<https://voice-notes-485257567514.europe-west1.run.app>**. The API key is sent
-separately; paste it into the **API key** field on the page.
+A deployed version is running on Google Cloud Run. The link and the API key are
+in my email; paste the key into the **API key** field on the page.
 
 1. Record a memo (the browser asks for microphone access) or upload one of the
    files in [`samples/`](samples/).
@@ -36,7 +36,7 @@ With curl:
 
 ```bash
 curl -H "Authorization: Bearer $API_KEY" -F audio=@samples/sales-call-en.m4a \
-  https://voice-notes-485257567514.europe-west1.run.app/v1/notes
+  "$DEMO_URL/v1/notes"
 ```
 
 The service scales to zero, so the first request after a quiet period takes a
