@@ -8,6 +8,10 @@ sentiment and tags; the note is then delivered in parallel to any
 number of destinations: **Notion**, **Google Sheets**, a signed
 **webhook**, or the console.
 
+> This is part 2 of the VoiceLine challenge. Part 1, how I would build VoiceLine
+> from scratch (app, backend, infra and AI), is in
+> **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+
 ```
 audio ──▶ POST /v1/notes ──▶ Gemini (transcribe + extract, JSON schema)
                                   │
