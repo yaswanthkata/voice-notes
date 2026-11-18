@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="560" viewBox="0 0 1080 560" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <style>
+      .box   { fill: #ffffff; stroke: #334155; stroke-width: 1.5; }
+      .ai    { fill: #f5f3ff; stroke: #6d28d9; stroke-width: 1.5; }
+      .ext   { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.5; }
+      .title { font-size: 15px; font-weight: 600; fill: #0f172a; text-anchor: middle; }
+      .sub   { font-size: 11.5px; fill: #64748b; text-anchor: middle; }
+      .edge  { fill: none; stroke: #475569; stroke-width: 1.5; marker-end: url(#arrow); }
+      .lbl   { font-size: 11.5px; fill: #334155; }
+      .num   { fill: #4f46e5; }
+      .numt  { font-size: 10.5px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+      .group { fill: #f0f5ff; stroke: #c7d7f5; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .glbl  { font-size: 12px; font-weight: 600; fill: #3b5bab; }
+    </style>
+  </defs>
+
+  <rect width="1080" height="560" fill="#ffffff"/>
+
+  <!-- Google Cloud group -->
+  <rect class="group" x="250" y="20" width="560" height="460" rx="14"/>
+  <text class="glbl" x="266" y="42">Cloud · EU region</text>
+
+  <!-- Boxes -->
+  <rect class="box" x="30" y="225" width="150" height="70" rx="10"/>
+  <text class="title" x="105" y="256">Mobile app</text>
+  <text class="sub" x="105" y="275">React Native · offline queue</text>
+
+  <rect class="ext" x="30" y="395" width="150" height="60" rx="10"/>
+  <text class="title" x="105" y="421">Push</text>
+  <text class="sub" x="105" y="439">FCM / APNs</text>
+
+  <rect class="box" x="290" y="60" width="170" height="60" rx="10"/>
+  <text class="title" x="375" y="86">Object storage</text>
+  <text class="sub" x="375" y="104">audio · deleted after 30 days</text>
+
+  <rect class="box" x="290" y="225" width="170" height="70" rx="10"/>
+  <text class="title" x="375" y="256">Go API</text>
+  <text class="sub" x="375" y="275">container · REST/JSON</text>
+
+  <rect class="box" x="290" y="395" width="170" height="60" rx="10"/>
+  <text class="title" x="375" y="421">Postgres</text>
+  <text class="sub" x="375" y="439">managed database</text>
+
+  <rect class="box" x="500" y="235" width="80" height="50" rx="10"/>
+  <text class="title" x="540" y="265">Queue</text>
+
+  <rect class="box" x="620" y="225" width="170" height="70" rx="10"/>
+  <text class="title" x="705" y="256">Go workers</text>
+  <text class="sub" x="705" y="275">container · same codebase</text>
+
+  <rect class="ai" x="620" y="60" width="170" height="60" rx="10"/>
+  <text class="title" x="705" y="86">LLM</text>
+  <text class="sub" x="705" y="104">EU-hosted · audio → JSON</text>
+
+  <rect class="ext" x="880" y="225" width="170" height="70" rx="10"/>
+  <text class="title" x="965" y="256">Customer CRM</text>
+  <text class="sub" x="965" y="275">Salesforce, HubSpot, …</text>
+
+  <!-- 1: app uploads audio straight to storage -->
+  <path class="edge" d="M105,225 V90 H287"/>
+  <circle class="num" cx="122" cy="78" r="8"/><text class="numt" x="122" y="82">1</text>
+  <text class="lbl" x="135" y="82">upload audio (signed URL)</text>
+
+  <!-- 1 / 4: app calls the API -->
+  <path class="edge" d="M180,260 H287"/>
+  <circle class="num" cx="194" cy="244" r="8"/><text class="numt" x="194" y="248">1</text>
+  <text class="lbl" x="207" y="248">create memo</text>
+  <circle class="num" cx="194" cy="278" r="8"/><text class="numt" x="194" y="282">4</text>
+  <text class="lbl" x="207" y="282">confirm</text>
+
+  <!-- 2: API saves and publishes -->
+  <path class="edge" d="M375,295 V392"/>
+  <circle class="num" cx="392" cy="342" r="8"/><text class="numt" x="392" y="346">2</text>
+  <text class="lbl" x="405" y="346">save memo</text>
+  <path class="edge" d="M460,260 H497"/>
+  <circle class="num" cx="479" cy="244" r="8"/><text class="numt" x="479" y="248">2</text>
+  <path class="edge" d="M580,260 H617"/>
+
+  <!-- 3: worker reads audio, calls Gemini, saves draft -->
+  <path class="edge" d="M650,225 V160 H400 V123"/>
+  <circle class="num" cx="512" cy="150" r="8"/><text class="numt" x="512" y="154">3</text>
+  <text class="lbl" x="525" y="154">read audio</text>
+  <path class="edge" d="M705,225 V123"/>
+  <circle class="num" cx="722" cy="172" r="8"/><text class="numt" x="722" y="176">3</text>
+  <text class="lbl" x="735" y="176">transcribe + extract</text>
+  <path class="edge" d="M705,295 V425 H463"/>
+  <circle class="num" cx="530" cy="413" r="8"/><text class="numt" x="530" y="417">3</text>
+  <text class="lbl" x="543" y="417">save draft</text>
+
+  <!-- 4: push back to the app -->
+  <path class="edge" d="M740,295 V505 H105 V458"/>
+  <circle class="num" cx="370" cy="493" r="8"/><text class="numt" x="370" y="497">4</text>
+  <text class="lbl" x="383" y="497">draft ready</text>
+  <path class="edge" d="M105,395 V298"/>
+
+  <!-- 5: worker writes to the CRM -->
+  <path class="edge" d="M790,260 H877"/>
+  <circle class="num" cx="806" cy="244" r="8"/><text class="numt" x="806" y="248">5</text>
+  <text class="lbl" x="819" y="248">write note</text>
+
+  <text class="lbl" x="30" y="540" fill="#64748b">Numbers match the steps in “How a memo moves through the system”.</text>
+</svg>
