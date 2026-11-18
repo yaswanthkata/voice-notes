@@ -3,8 +3,10 @@
 //
 // Authentication uses Google Application Default Credentials, so there is no
 // secret to manage: on Cloud Run it is the service's own service account (share
-// the sheet with that account's email as Editor); locally it is your login from
-// `gcloud auth application-default login` with the spreadsheets scope.
+// the sheet with that account's email as Editor). Locally, impersonate that
+// same account: Google blocks the spreadsheets scope for gcloud's own OAuth
+// client, so a plain `gcloud auth application-default login --scopes=...`
+// fails with "This app is blocked".
 //
 // Config:
 //
@@ -87,7 +89,7 @@ func New(cfg Config) (*Sink, error) {
 	if cfg.Token == nil {
 		creds, err := credentials.DetectDefault(&credentials.DetectOptions{Scopes: []string{scope}})
 		if err != nil {
-			return nil, fmt.Errorf("google credentials (locally: gcloud auth application-default login --scopes=%s,https://www.googleapis.com/auth/cloud-platform): %w", scope, err)
+			return nil, fmt.Errorf("google credentials (locally: gcloud auth application-default login --impersonate-service-account=<service account the sheet is shared with>; see README): %w", err)
 		}
 		cfg.Token = func(ctx context.Context) (string, error) {
 			t, err := creds.Token(ctx) // cached and refreshed by the library

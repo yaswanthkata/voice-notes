@@ -115,6 +115,9 @@ func run(log *slog.Logger) error {
 		return err
 	case <-ctx.Done():
 	}
+	// Restore default signal handling: a second Ctrl-C kills the process
+	// instead of waiting out a drain that can take minutes.
+	stop()
 
 	log.Info("shutting down, draining in-flight requests")
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), maxRequest)

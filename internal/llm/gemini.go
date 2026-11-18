@@ -138,12 +138,17 @@ func normalize(n *domain.Note, today time.Time) {
 	n.Title = strings.TrimSpace(n.Title)
 	n.Summary = strings.TrimSpace(n.Summary)
 	n.Sentiment = oneOf(n.Sentiment, domain.Sentiments)
+	n.Contact.Name = strings.TrimSpace(n.Contact.Name)
+	n.Contact.Company = strings.TrimSpace(n.Contact.Company)
+	n.Contact.Email = strings.TrimSpace(n.Contact.Email)
 
-	if n.NextSteps == nil {
-		n.NextSteps = []domain.Task{}
-	}
-	for i := range n.NextSteps {
-		t := &n.NextSteps[i]
+	// A task without a title would become a blank to-do in every destination.
+	tasks := []domain.Task{}
+	for _, t := range n.NextSteps {
+		t.Title = strings.TrimSpace(t.Title)
+		if t.Title == "" {
+			continue
+		}
 		if _, err := time.Parse(domain.DateLayout, t.DueDate); err != nil {
 			t.DueDate = "" // drop anything that isn't a valid date
 		}
@@ -152,7 +157,9 @@ func normalize(n *domain.Note, today time.Time) {
 		if t.DueDate != "" && t.DueDate <= tomorrow { // ISO dates compare as strings
 			t.Priority = "high"
 		}
+		tasks = append(tasks, t)
 	}
+	n.NextSteps = tasks
 
 	insights := []domain.Insight{}
 	for _, in := range n.Insights {
@@ -163,10 +170,20 @@ func normalize(n *domain.Note, today time.Time) {
 	}
 	n.Insights = insights
 
-	if n.Tags == nil {
-		n.Tags = []string{}
+	// Tags become labels in each destination; empty or case-variant duplicates
+	// would show up as separate (or blank) pills.
+	tags := []string{}
+	for _, tag := range n.Tags {
+		tag = strings.ToLower(strings.TrimSpace(tag))
+		if tag != "" && !slices.Contains(tags, tag) && len(tags) < maxTags {
+			tags = append(tags, tag)
+		}
 	}
+	n.Tags = tags
 }
+
+// maxTags matches the "0-5 tags" rule in the prompt.
+const maxTags = 5
 
 // oneOf returns v if it is allowed, otherwise the default (first) value.
 func oneOf(v string, allowed []string) string {

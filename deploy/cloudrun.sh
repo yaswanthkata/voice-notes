@@ -10,6 +10,7 @@
 # needed locally: Cloud Build builds the Dockerfile.
 #
 # Optional env: REGION (default europe-west1), SERVICE (default voice-notes),
+# DEPLOY_RATE_LIMIT_PER_MINUTE (default 30), DEPLOY_MAX_CONCURRENT_JOBS (default 2),
 # DEPLOY_SINKS (default none: analysis only) plus any connector variables
 # (NOTION_TOKEN, ...). DEPLOY_SINKS is separate from SINKS on purpose, so a
 # local .env (SINKS=console) loaded into the shell can't leak into a deploy.
@@ -24,8 +25,9 @@
 #   the API key, and the Sheets connector only reaches spreadsheets that were
 #   explicitly shared with this account.
 # - Secrets are passed as environment variables through a private temp file:
-#   never in the repo, the image or the shell history. Project members with
-#   Cloud Run access can read them, so use a dedicated, revocable Gemini key.
+#   never in the repo or the image. Project members with Cloud Run access can
+#   read them, so use a dedicated, revocable Gemini key. In production they
+#   would live in Secret Manager (--set-secrets).
 set -euo pipefail
 
 REGION="${REGION:-europe-west1}"
@@ -72,7 +74,13 @@ env = {
     "GEMINI_API_KEY": os.environ["GEMINI_API_KEY"],
     "API_KEY": os.environ["API_KEY"],
     "SINKS": os.environ["DEPLOY_SINKS"],  # already normalised and checked above
-    "RATE_LIMIT_PER_MINUTE": os.environ.get("RATE_LIMIT_PER_MINUTE", "30"),
+    # DEPLOY_-prefixed like DEPLOY_SINKS, so a sourced local .env can't change
+    # production limits.
+    "RATE_LIMIT_PER_MINUTE": os.environ.get("DEPLOY_RATE_LIMIT_PER_MINUTE", "30"),
+    # Each analysis holds the upload several times over (temp file, bytes,
+    # base64 for Gemini, JSON body), and Cloud Run's filesystem is in-memory:
+    # 2 concurrent 20 MB memos fit comfortably in 512 MiB, 4 might not.
+    "MAX_CONCURRENT_JOBS": os.environ.get("DEPLOY_MAX_CONCURRENT_JOBS", "2"),
     # Requests reach the container from Cloud Run's internal proxy (169.254.x);
     # trusting only that range lets the rate limiter see real client IPs from
     # X-Forwarded-For without letting clients spoof theirs.

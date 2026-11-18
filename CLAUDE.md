@@ -132,8 +132,10 @@ client via `context.WithoutCancel`) → 201 / 207 / 502.
   blocks per array (transcript chunks go inside a toggle). Rich-text background
   colours stand in for tag pills.
 - **Google Sheets**: no secret. ADC = the Cloud Run service account (share the
-  sheet with it as Editor) or, locally, `gcloud auth application-default login`
-  with the spreadsheets scope. A range without a tab name targets the first tab,
+  sheet with it as Editor). Locally, `gcloud auth application-default login
+  --scopes=...spreadsheets` is **blocked by Google** ("This app is blocked" for
+  gcloud's OAuth client); use `--impersonate-service-account=<runtime SA>` after
+  granting yourself `roles/iam.serviceAccountTokenCreator` on it. A range without a tab name targets the first tab,
   so localized default tab names ("Tabelle1") don't matter.
 
 - **Cloud Run deploy** (deploy/cloudrun.sh): `/healthz` is reserved by Cloud Run's
@@ -145,6 +147,12 @@ client via `context.WithoutCancel`) → 201 / 207 / 502.
   into Cloud Logging. The script reads `DEPLOY_SINKS` (default `none`, refuses
   `console`), not `SINKS`, so a sourced local `.env` can't leak into a deploy.
   Newer Gemini API keys start with `AQ.` (53 chars), not `AIza`.
+  Every deploy **replaces all** env vars (`--env-vars-file`), so export every
+  connector setting each time. Sourcing `.env` before deploying also exports
+  its local `API_KEY` (e.g. `localtest`) to production: set the production key
+  *after* sourcing. For the same reason limits use `DEPLOY_RATE_LIMIT_PER_MINUTE`
+  (30) and `DEPLOY_MAX_CONCURRENT_JOBS` (2; 512 MiB and an in-memory filesystem
+  don't fit 4 concurrent 20 MB memos).
 
 ## Secrets
 
