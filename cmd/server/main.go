@@ -20,6 +20,9 @@ import (
 	// Connectors register themselves with the sinks registry. Adding a new
 	// CRM or destination = one package + one import line here.
 	_ "voice-notes/internal/sinks/console"
+	_ "voice-notes/internal/sinks/notion"
+	_ "voice-notes/internal/sinks/sheets"
+	_ "voice-notes/internal/sinks/webhook"
 )
 
 // Timeouts around the analysis budget (AnalyzeTimeout, from config).
@@ -111,9 +114,6 @@ func run(log *slog.Logger) error {
 		return err
 	case <-ctx.Done():
 	}
-	// Restore default signal handling: a second Ctrl-C kills the process
-	// instead of waiting out a drain that can take minutes.
-	stop()
 
 	log.Info("shutting down, draining in-flight requests")
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), maxRequest)
