@@ -1,0 +1,14 @@
+# Files never uploaded to Cloud Build by `gcloud run deploy --source`.
+# Secrets first: they are passed at deploy time, never as files.
+.env
+.env.*
+.gcloudignore
+.git
+.gitignore
+.claude/
+.vscode/
+.DS_Store
+bin/
+samples/
+deploy/
+*.md

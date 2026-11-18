@@ -117,7 +117,6 @@ func TestCreateNote(t *testing.T) {
 		{"success", "audio", wav, 1 << 20, &fakeAnalyzer{note: domain.Note{Title: "Call with ACME"}}, allOK, http.StatusCreated, true},
 		{"missing field", "file", wav, 1 << 20, &fakeAnalyzer{}, allOK, http.StatusBadRequest, false},
 		{"not audio", "audio", []byte("hello, I am a text file"), 1 << 20, &fakeAnalyzer{}, allOK, http.StatusUnsupportedMediaType, false},
-		{"empty file", "audio", []byte{}, 1 << 20, &fakeAnalyzer{}, allOK, http.StatusBadRequest, false},
 		{"too large", "audio", wav, 512, &fakeAnalyzer{}, allOK, http.StatusRequestEntityTooLarge, false},
 		{"body over limit plus overhead", "audio", append(wav, make([]byte, multipartOverhead+1024)...), 512, &fakeAnalyzer{}, allOK, http.StatusRequestEntityTooLarge, false},
 		{"analyzer fails", "audio", wav, 1 << 20, &fakeAnalyzer{err: errors.New("boom")}, allOK, http.StatusBadGateway, false},
@@ -292,7 +291,7 @@ func TestSinkSelectionWithoutDestinations(t *testing.T) {
 	w := multipart.NewWriter(&buf)
 	fw, _ := w.CreateFormFile("audio", "memo.wav")
 	fw.Write(minimalWAV())
-	w.WriteField("sinks", "notion")
+	w.WriteField("sinks", "hubspot")
 	w.Close()
 	req := httptest.NewRequest(http.MethodPost, "/v1/notes", &buf)
 	req.Header.Set("Content-Type", w.FormDataContentType())

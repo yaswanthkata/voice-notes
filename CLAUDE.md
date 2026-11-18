@@ -2,7 +2,7 @@
 
 Go (Gin) service: a voice memo is uploaded, Gemini transcribes it and extracts a
 structured CRM note in one call, and the note is delivered in parallel to
-pluggable connectors (Notion, Google Sheets, webhook, console). Built as a time-boxed (~4h)
+pluggable connectors (HubSpot, Notion, Google Sheets, webhook, console). Built as a time-boxed (~4h)
 interview assignment: keep it production-minded but **do not overengineer**.
 
 ## Commands
@@ -32,7 +32,7 @@ internal/llm/          Gemini adapter (google.golang.org/genai), implements api.
                        prompt.go = system prompt + JSON schema; gemini.go = transport.
 internal/httpx/        shared JSON HTTP client for connectors (timeouts, safe retries, typed errors)
 internal/sinks/        connector extension point: Sink interface, Register/Build registry, Fanout
-internal/sinks/<name>/ one package per connector (notion, sheets, webhook, console)
+internal/sinks/<name>/ one package per connector (hubspot, notion, sheets, webhook, console)
 web/                   static test page, embedded via go:embed
 samples/               test memos (English + German)
 ```
@@ -50,7 +50,7 @@ client via `context.WithoutCancel`) → 201 / 207 / 502.
 - The `sinks` core never imports a connector. Connectors import `sinks` and call
   `sinks.Register` from `init()`; `main.go` enables them via blank import.
 - Each connector reads its own config through the `sinks.Env` func with its own
-  prefix (`NOTION_*`, `SHEETS_*`, `WEBHOOK_*`). Never add connector
+  prefix (`HUBSPOT_*`, `NOTION_*`, `SHEETS_*`, `WEBHOOK_*`). Never add connector
   fields to `config.Config`.
 - Define interfaces where they are consumed, keep them small.
 
@@ -73,7 +73,7 @@ client via `context.WithoutCancel`) → 201 / 207 / 502.
 - Connectors only call fixed vendor hosts. Never let request data choose a URL (SSRF;
   on Cloud Run the metadata server is reachable).
 - Connectors split **pure mapping** (`mapper.go`, no I/O, unit-tested) from
-  **transport** (`<name>.go`, uses `httpx`).
+  **transport** (`<name>.go`, uses `httpx`). See `internal/sinks/hubspot/`.
 - Retries: only via `httpx`. 429 is always retried; 5xx/network only for idempotent
   methods. Never add POST retries on 5xx — duplicate CRM records. `httpx` never
   follows redirects (a redirect could re-send a signed payload to another host).
@@ -90,7 +90,7 @@ client via `context.WithoutCancel`) → 201 / 207 / 502.
 
 1. `gofmt -l .` prints nothing, `go vet ./...` clean.
 2. `go test -race ./...` passes; new behaviour has a test (including error paths).
-3. Live checks against Gemini or connector APIs are optional and must never be committed as
+3. Live checks against Gemini/HubSpot are optional and must never be committed as
    tests that require network or keys.
 4. Update `.env.example` (comments on their **own line**) and the README when config changes.
 
@@ -112,6 +112,9 @@ client via `context.WithoutCancel`) → 201 / 207 / 502.
   `mt.Is(...)`, not string equality. Map to Gemini names (`audio/mpeg` → `audio/mp3`).
 - `http.FileServer` redirects `/index.html` → `./`; the router serves index bytes directly.
 - `httptest.Server.Close` blocks on handlers that never return — bound fake handlers.
+- HubSpot: legacy private apps can't be created since 2026-10-26; use a **service key**.
+  Endpoints are date-versioned (`/crm/objects/2026-09/...`). Association type IDs:
+  note→contact 202, task→contact 204. Contacts are matched by lowercased email only.
 
 - **Prompt changes need a mini eval, not one run.** Output is non-deterministic: the
   old prompt ("recorded right after a customer meeting") turned the reminder "Book two

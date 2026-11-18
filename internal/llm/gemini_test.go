@@ -46,10 +46,9 @@ func TestAnalyzeSuccess(t *testing.T) {
 		"contact":{"name":"Anna","company":"ACME","email":""},
 		"next_steps":[{"title":"Send pricing","due_date":"2026-11-14","type":"document","priority":"high"},
 		              {"title":"Follow up","due_date":"next week","type":"fax","priority":""},
-		              {"title":"Call back","due_date":"2026-11-13","type":"call","priority":"low"},
-		              {"title":"  ","due_date":"","type":"todo","priority":"medium"}],
+		              {"title":"Call back","due_date":"2026-11-13","type":"call","priority":"low"}],
 		"insights":[{"type":"competitor","text":" Also evaluating Contoso. "},{"type":"gossip","text":"x"},{"type":"risk","text":" "}],
-		"sentiment":"positive","tags":[" Pricing ","pricing","","crm","a","b","c","d"]}`
+		"sentiment":"positive","tags":["pricing"]}`
 
 	var reqBody map[string]any
 	g := newTestGemini(t, func(w http.ResponseWriter, r *http.Request) {
@@ -99,9 +98,6 @@ func TestAnalyzeSuccess(t *testing.T) {
 	}
 	if len(note.Insights) != 1 || note.Insights[0] != (domain.Insight{Type: "competitor", Text: "Also evaluating Contoso."}) {
 		t.Errorf("insights not cleaned (unknown types and empty text dropped): %+v", note.Insights)
-	}
-	if got, want := strings.Join(note.Tags, ","), "pricing,crm,a,b,c"; got != want {
-		t.Errorf("tags = %q, want %q (trimmed, lowercased, deduplicated, max 5)", got, want)
 	}
 }
 

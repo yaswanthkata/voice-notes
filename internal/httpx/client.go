@@ -131,8 +131,8 @@ func (c *Client) send(ctx context.Context, req Request, body []byte) (*http.Resp
 	}
 	resp, err := c.HTTP.Do(r)
 	if err != nil {
-		// *url.Error embeds the full URL, which can contain PII (e.g. a CRM
-		// that looks contacts up by email in the path). Keep only the cause.
+		// *url.Error embeds the full URL, which can contain PII (HubSpot looks
+		// contacts up by email in the path). Keep only the cause.
 		if ue, ok := errors.AsType[*url.Error](err); ok {
 			err = ue.Err
 		}

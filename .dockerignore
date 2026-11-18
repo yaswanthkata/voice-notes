@@ -1,0 +1,8 @@
+.env
+.env.*
+.git
+.claude
+.vscode
+bin
+samples
+*.md
