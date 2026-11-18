@@ -6,7 +6,7 @@ description: Add a new delivery connector (CRM, note-taking tool, spreadsheet, c
 # Add a connector
 
 Connectors live in `internal/sinks/<name>/` and plug into the registry in
-`internal/sinks/sink.go`. The core must not change. Follow `internal/sinks/hubspot/`
+`internal/sinks/sink.go`. The core must not change. Follow `internal/sinks/notion/`
 as the reference implementation.
 
 ## Steps

@@ -28,8 +28,8 @@ type Config struct {
 	GeminiAPIKey string
 	GeminiModel  string
 
-	// Enabled connectors, e.g. ["hubspot", "webhook"]. Each connector reads
-	// its own settings (HUBSPOT_*, WEBHOOK_*, ...) — the core config doesn't
+	// Enabled connectors, e.g. ["notion", "webhook"]. Each connector reads
+	// its own settings (NOTION_*, WEBHOOK_*, ...) — the core config doesn't
 	// know about any vendor. Empty for SINKS=none (analysis only).
 	Sinks []string
 }

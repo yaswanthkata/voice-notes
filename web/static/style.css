@@ -284,7 +284,6 @@ audio { width: 100%; height: 36px; }
 .insight-competitor       { --tint: #8b5cf6; }
 .insight-product_feedback { --tint: #3b82f6; }
 .insight-complaint        { --tint: #ea580c; }
-.sink-hubspot { --tint: #f97316; }
 .sink-notion  { --tint: var(--text); }
 .sink-sheets  { --tint: #16a34a; }
 .sink-webhook { --tint: var(--accent); }

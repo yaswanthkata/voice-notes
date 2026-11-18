@@ -27,9 +27,9 @@ func TestLoad(t *testing.T) {
 		},
 		{
 			name: "lists are trimmed, lowercased and skip empty items",
-			env:  map[string]string{"GEMINI_API_KEY": "k", "SINKS": " HubSpot, ,webhook ", "TRUSTED_PROXIES": "10.0.0.0/8"},
+			env:  map[string]string{"GEMINI_API_KEY": "k", "SINKS": " Notion, ,webhook ", "TRUSTED_PROXIES": "10.0.0.0/8"},
 			check: func(t *testing.T, c Config) {
-				if strings.Join(c.Sinks, ",") != "hubspot,webhook" || strings.Join(c.TrustedProxies, ",") != "10.0.0.0/8" {
+				if strings.Join(c.Sinks, ",") != "notion,webhook" || strings.Join(c.TrustedProxies, ",") != "10.0.0.0/8" {
 					t.Errorf("sinks = %v, proxies = %v", c.Sinks, c.TrustedProxies)
 				}
 			},

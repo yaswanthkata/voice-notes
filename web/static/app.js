@@ -18,7 +18,6 @@ const ICON = {
   competitor: "M5 21V4 M5 4h12l-2.5 4L17 12H5",
   product_feedback: "M4 5h16v11H9l-5 4z M8 9h8 M8 12h5",
   complaint: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M8.5 16.5a4.5 4.5 0 0 1 7 0 M9 10h.01 M15 10h.01",
-  crm: "M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1 M9.5 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6 M21 19v-1a4 4 0 0 0-3-3.9 M16 4.1a3 3 0 0 1 0 5.8",
   notes: "M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6z M6 3v18 M10 8h5 M10 12h5",
   link: "M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1",
   terminal: "M4 17l6-5-6-5 M12 19h8",
@@ -42,7 +41,6 @@ const INSIGHT_TYPES = {
 };
 // Destinations get a generic icon by kind, tinted per product. No vendor logos.
 const SINKS = {
-  hubspot: { label: "HubSpot", kind: "CRM", icon: ICON.crm },
   notion: { label: "Notion", kind: "Notes", icon: ICON.notes },
   sheets: { label: "Google Sheets", kind: "Spreadsheet", icon: ICON.table },
   webhook: { label: "Webhook", kind: "Any API", icon: ICON.link },

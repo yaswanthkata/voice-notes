@@ -21,7 +21,6 @@ import (
 	// Connectors register themselves with the sinks registry. Adding a new
 	// CRM or destination = one package + one import line here.
 	_ "voice-notes/internal/sinks/console"
-	_ "voice-notes/internal/sinks/hubspot"
 	_ "voice-notes/internal/sinks/notion"
 	_ "voice-notes/internal/sinks/sheets"
 	_ "voice-notes/internal/sinks/webhook"

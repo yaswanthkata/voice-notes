@@ -11,7 +11,7 @@
 #
 # Optional env: REGION (default europe-west1), SERVICE (default voice-notes),
 # DEPLOY_SINKS (default none: analysis only) plus any connector variables
-# (HUBSPOT_TOKEN, ...). DEPLOY_SINKS is separate from SINKS on purpose, so a
+# (NOTION_TOKEN, ...). DEPLOY_SINKS is separate from SINKS on purpose, so a
 # local .env (SINKS=console) loaded into the shell can't leak into a deploy.
 #
 # Notes:
@@ -78,9 +78,8 @@ env = {
     # X-Forwarded-For without letting clients spoof theirs.
     "TRUSTED_PROXIES": os.environ.get("TRUSTED_PROXIES", "169.254.0.0/16"),
 }
-for k in ("GEMINI_MODEL", "HUBSPOT_TOKEN", "HUBSPOT_PORTAL_ID", "HUBSPOT_APP_URL",
-          "NOTION_TOKEN", "NOTION_PARENT_PAGE_ID", "SHEETS_SPREADSHEET_ID", "SHEETS_TAB",
-          "WEBHOOK_URL", "WEBHOOK_SECRET"):
+for k in ("GEMINI_MODEL", "NOTION_TOKEN", "NOTION_PARENT_PAGE_ID", "SHEETS_SPREADSHEET_ID",
+          "SHEETS_TAB", "WEBHOOK_URL", "WEBHOOK_SECRET"):
     if os.environ.get(k):
         env[k] = os.environ[k]
 # JSON is valid YAML, which is what --env-vars-file expects; it also quotes safely.

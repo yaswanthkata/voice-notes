@@ -5,7 +5,7 @@ and extracts a structured note in a single call: summary, contact, typed next st
 (email, call, meeting, send document, to-do) with due dates and priority, insights
 "between the lines" (opportunities, risks, competitors, product feedback, complaints),
 sentiment and tags; the note is then delivered in parallel to any
-number of destinations: **HubSpot**, **Notion**, **Google Sheets**, a signed
+number of destinations: **Notion**, **Google Sheets**, a signed
 **webhook**, or the console.
 
 ```
@@ -13,8 +13,8 @@ audio ──▶ POST /v1/notes ──▶ Gemini (transcribe + extract, JSON sche
                                   │
                                   ▼
                   ┌──────── Fanout (parallel) ────────┐
-                  ▼          ▼          ▼             ▼
-               HubSpot    Notion   Google Sheets   webhook / console
+                  ▼                 ▼                 ▼
+               Notion         Google Sheets   webhook / console
 ```
 
 ## Quick start
@@ -46,7 +46,7 @@ CSP allows only its own files):
   subset of them (or none, to only analyse);
 - the result: title, sentiment, summary, next steps with type, priority and due
   date, insights, contact, the full transcript, and each delivery with a link to
-  the created record (Notion page, Google Sheet, HubSpot contact).
+  the created record (Notion page, Google Sheet).
 
 All model output is rendered with `textContent`, never as HTML.
 
@@ -84,7 +84,7 @@ are rejected with `400 unknown_destination` before the (paid) analysis runs.
     "insights": [{ "type": "competitor", "text": "Northwind is also evaluating Contoso." }],
     "sentiment": "positive", "tags": ["pricing"]
   },
-  "deliveries": [{ "sink": "hubspot", "ok": true, "id": "123", "url": "https://app.hubspot.com/…" }]
+  "deliveries": [{ "sink": "notion", "ok": true, "id": "…", "url": "https://www.notion.so/…" }]
 }
 
 // every error (4xx, 429, 5xx)
@@ -106,7 +106,7 @@ environment variables win). See [.env.example](.env.example) for every option.
 | `GEMINI_API_KEY` | (required) | |
 | `PORT` | `8080` | |
 | `GEMINI_MODEL` | `gemini-3.5-flash-lite` | Fastest model with equal extraction quality on our samples (3–6 s per memo) |
-| `SINKS` | `console` | Comma-separated: `console`, `hubspot`, `notion`, `sheets`, `webhook`; or `none` to analyse without delivering or storing anything |
+| `SINKS` | `console` | Comma-separated: `console`, `notion`, `sheets`, `webhook`; or `none` to analyse without delivering or storing anything |
 | `API_KEY` | (empty) | If set, `/v1` requires `Authorization: Bearer <key>` or `X-API-Key` |
 | `RATE_LIMIT_PER_MINUTE` | `10` | Per client IP |
 | `MAX_CONCURRENT_JOBS` | `4` | More concurrent analyses are rejected with 503 + `Retry-After` |
@@ -115,15 +115,6 @@ environment variables win). See [.env.example](.env.example) for every option.
 | `ANALYZE_TIMEOUT_SECONDS` | `90` | Time budget for the AI analysis; upload and delivery have their own limits |
 
 ### Destinations
-
-**HubSpot:** In HubSpot, go to Development → Keys → Service keys and create a key
-with scopes `crm.objects.contacts.read` and `crm.objects.contacts.write`. Set
-`HUBSPOT_TOKEN`, and optionally `HUBSPOT_PORTAL_ID` for deep links (EU accounts:
-`HUBSPOT_APP_URL=https://app-eu1.hubspot.com`). The connector
-upserts the contact by email, adds the note to the contact's timeline and creates
-one task per next step (EMAIL, CALL or TODO, with priority). Insights are part of
-the note. Without a valid email it doesn't guess; the note is created
-without a contact.
 
 **Notion:** In Notion, open Developer tools → Developer connections → New
 connection, choose **API token**, and copy the token. Give it access to a page
@@ -196,7 +187,7 @@ Key decisions:
 - **Security baseline.** Optional API key compared in constant time, per-IP rate
   limit, concurrency cap with load shedding, upload size cap, content sniffing,
   strict CSP and security headers. Model output is treated as untrusted: it's
-  HTML-escaped for HubSpot, sent as plain rich text to Notion, written as raw
+  sent as plain rich text to Notion, written as raw
   values (never formulas) to Google Sheets, and rendered with `textContent` in the
   browser. Connectors only call fixed vendor hosts, never user-supplied URLs.
 - **No secrets where none are needed.** Google Sheets authenticates as the
@@ -217,7 +208,7 @@ make build    # static binary in ./bin
 make docker   # distroless, non-root image; pass secrets at runtime with --env-file
 ```
 
-External APIs (Gemini, HubSpot, Notion, Google Sheets, webhooks) are faked with
+External APIs (Gemini, Notion, Google Sheets, webhooks) are faked with
 `httptest.Server`, so tests are fast and deterministic. Prompt changes are
 checked differently: LLM output varies between runs, so compare several memo
 types (English debrief, German debrief, pure reminder) over a few runs before

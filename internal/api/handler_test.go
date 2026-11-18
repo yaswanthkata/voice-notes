@@ -291,7 +291,7 @@ func TestSinkSelectionWithoutDestinations(t *testing.T) {
 	w := multipart.NewWriter(&buf)
 	fw, _ := w.CreateFormFile("audio", "memo.wav")
 	fw.Write(minimalWAV())
-	w.WriteField("sinks", "hubspot")
+	w.WriteField("sinks", "notion")
 	w.Close()
 	req := httptest.NewRequest(http.MethodPost, "/v1/notes", &buf)
 	req.Header.Set("Content-Type", w.FormDataContentType())
